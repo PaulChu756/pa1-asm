@@ -14,9 +14,10 @@
 	.globl main
 	
 main:
-
 # print welcome statements
-
+li $v0, 4
+la $a0, welcome
+syscall
 
 # print prompt for user input
 
@@ -34,8 +35,15 @@ main:
 
 
 # cleanly exit the program
+li $v0, 10
+syscall
 
 
 	.data
 welcome: 	.ascii "Welcome to the Prime Determiner!\n"
 			.asciiz "Enter some numbers and I will tell you if they are prime.\n"
+
+
+# How many hours did you spend on this assignment?
+# What was the most difficult part for you? Why?
+# What was the easiest? Why?
