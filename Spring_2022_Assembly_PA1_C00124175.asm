@@ -10,9 +10,11 @@
 # State what registers you will use for what variables here
 # Be consistent with your statements or you will most likley get confused later on
 #
-# t0 = value
-# t1 = i = 2 
-# t2 = reminder
+# $t0 = value
+# $t1 = i = 2 
+# $t2 = reminder
+# $t3 = 1
+# $t4 = -1
 
 	.text
 	.globl main
@@ -34,9 +36,15 @@ main:
 	move $t0, $v0		# put the user input value into $t0
 
 # use loop to determine if the number is prime
+	ori $t3, $0, 1 		# check for 1
 	ori $t1, $0, 2 		# put i = 2
+	sub $t4 $0, $t3		# t4 = 0 - 1
 
 loop:
+
+	beq $t4, $t0, closeMsg		# check if user input is -1 to quit
+	beq $t3, $t0, numIsNotPrime	# check if user input is 1 to set it not prime
+
 	beq $t1, $t0, numIsPrime	# check to see if i == value, that means number is prime
 	ori $0, $0, 0 				# no-op
 
@@ -53,19 +61,19 @@ loop:
 # print proper resulting statement 
 numIsPrime:
 	li $v0, 4
-	la $a0, prime
+	la $a0, prime				# output prime message
 	syscall
-	j close
+	j close						# jump to close
 
 numIsNotPrime:
 	li $v0, 4
-	la $a0, notPrime
+	la $a0, notPrime			# output notPrime message
 	syscall
 
 # print closing prompt
 close:
 	li $v0, 4
-	la $a0, closeMsg
+	la $a0, closeMsg			#output close message
 	syscall
 
 
