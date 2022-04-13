@@ -9,29 +9,64 @@
 # 
 # State what registers you will use for what variables here
 # Be consistent with your statements or you will most likley get confused later on
-# 
+#
+# t0 = value
+# t1 = i = 2 
+# t2 = reminder
+
 	.text
 	.globl main
 	
 main:
 # print welcome statements
-li $v0, 4
-la $a0, welcome
-syscall
+	li $v0, 4
+	la $a0, welcome
+	syscall
 
 # print prompt for user input
-
+	li $v0, 4
+	la $a0, usermsg
+	syscall
 
 # get value from the user
+	li $v0, 5
+	syscall
+	move $t0, $v0		# put the user input value into $t0
 
+# use loop to determine if the number is prime
+	ori $t1, $0, 2 		# put i = 2
 
-# use loop to determine if the numer is prime
+loop:
+	beq $t1, $t0, numIsPrime	# check to see if i == value, that means number is prime
+	ori $0, $0, 0 				# no-op
 
+	div $t0, $t1 				# val / i, but care about the reminder only to do val % i
+	mfhi $t2 					# grab the reminder and put it into t2
+
+	beqz $t2, numIsNotPrime		# check if $t2 == 0
+	ori $0, $0, 0				# no-op
+	
+	addi $t1, $t1, 1 			# i++
+	j loop						# go back to the loop
+	ori $0, $0, 0 				# no-op
 
 # print proper resulting statement 
+numIsPrime:
+	li $v0, 4
+	la $a0, prime
+	syscall
+	j close
 
+numIsNotPrime:
+	li $v0, 4
+	la $a0, notPrime
+	syscall
 
 # print closing prompt
+close:
+	li $v0, 4
+	la $a0, closeMsg
+	syscall
 
 
 # cleanly exit the program
@@ -42,8 +77,18 @@ syscall
 	.data
 welcome: 	.ascii "Welcome to the Prime Determiner!\n"
 			.asciiz "Enter some numbers and I will tell you if they are prime.\n"
+			
+
+usermsg: 	.asciiz "Please enter a positive integer:\n"
+
+prime: 		.asciiz "That value is a prime!\n"
+
+notPrime: 	.asciiz "That value is not a prime!\n"
+
+closeMsg: 	.asciiz "Thanks for using my program!\n"
 
 
-# How many hours did you spend on this assignment?
-# What was the most difficult part for you? Why?
-# What was the easiest? Why?
+
+# How many hours did you spend on this assignment? - 2 hours, one to trying to figure out how to configure it and the other was debugging
+# What was the most difficult part for you? Why? - Sticking to vars and forgetting I changed it, so my loop never worked, I'm dumb I know. I would also say what was hard was the setup without any guidance from Mr. Wise, I would be lost. I also forgot that with messages to the output, I need to jump over existing ones.
+# What was the easiest? Why? - Setting up vars and outputting to the console, that was really easy and simple.
